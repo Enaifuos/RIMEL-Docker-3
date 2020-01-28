@@ -3,7 +3,7 @@ import json
 
 
 if ( len(sys.argv) < 2 ) :
-	print("Give JSON data file as argument !")
+	print("Give JSON data file as argument :\n python3 scriptPython.py ../jsons/thinksBoard.json")
 else :
 	tokens = ['environment', 'variable', 'env', 'var']
 	with open(sys.argv[1], 'r') as f :
