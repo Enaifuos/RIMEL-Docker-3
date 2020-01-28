@@ -1,10 +1,14 @@
+import sys
 import json
 
-tokens = ['environment', 'variable', 'env', 'var']
 
-with open('../jsons/thinksBoard.json', 'r') as f:
-    logs_json = json.load(f)
+if ( len(sys.argv) < 2 ) :
+	print("Give JSON data file as argument !")
+else :
+	tokens = ['environment', 'variable', 'env', 'var']
+	with open(sys.argv[1], 'r') as f :
+		logs_json = json.load(f)
 
-for log in logs_json :
-	if any(token in log['subject'] for token in tokens) :
-		print(log['subject']+ "   :   " + log['sha'])
+	for log in logs_json :
+		if any(token in log['subject'] for token in tokens) :
+			print(log['subject']+ "   :   " + log['sha'])
