@@ -1,7 +1,6 @@
 import sys
 import json
 
-
 if ( len(sys.argv) < 2 ) :
 	print("Give JSON data file as argument :\n python3 scriptPython.py ../jsons/thinksBoard.json")
 else :
