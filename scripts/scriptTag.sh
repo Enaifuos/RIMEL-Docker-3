@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #Ce script récupère l identifiant de commits par tag
 #Il produit un fichier json {"tag":"id du commit du tag"}
@@ -19,9 +19,9 @@ then
 		jsonContent+="\":\""
 		jsonContent+=$(git show $i | grep commit | cut -d " " -f2)
 		jsonContent+="\""
-		jsonContent+=",\n"
+		jsonContent+=","
 	done
-	jsonContent=${jsonContent%",\n"};
+	jsonContent=${jsonContent%","};
 	jsonContent+="}"
 	
 	echo "moving back to $rimelScriptsPath"
