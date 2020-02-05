@@ -1,12 +1,13 @@
 import os
 
 from scripts.AnalysisScript import runAnalysis
+from scripts.AnalysisStatistics import getStatisticsFromAllFiles
 from scripts.release_scripts.get_nb_of_ev import get_nb_of_EV
 
 import matplotlib.pyplot as plt
 import json
 
-project_path = '../../../thingsboard'
+project_path = '/home/passport/Repos/tmp/thingsboard'
 current_path_from_project_path = '../RIMEL-Docker-3/scripts/release_scripts'
 project_env_files_path = './docker'
 script_tag_path = '../scriptTag.sh'
@@ -15,10 +16,10 @@ tags_path = './tags.json'
 def retrieve_stats(nbEV, complexities, nloc):
     nbEV.append(get_nb_of_EV())
 
-    data = runAnalysis('.')
-    print(data)
-    complexities.append(data['ccn']['avg'])
-    nloc.append(data['nloc']['avg'])
+    data = getStatisticsFromAllFiles(runAnalysis('.'))
+
+    complexities.append(json.loads(data['ccn'])['avg'])
+    nloc.append(json.loads(data['nloc'])['avg'])
 
     return nbEV, complexities, nloc
 

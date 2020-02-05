@@ -16,9 +16,7 @@ import pathlib
 from distutils.dir_util import copy_tree
 
 # GLOBALS
-LIZARD_SUPPORTED_LANGUAGES = ["c", "cpp", "cc", "mm", "cxx", "h", "hpp", "cs", "gd",
-                              "go", "java", "js", "lua", "m", "php", "py", "rb",
-                              "scala", "swift", "tnsdl", "sdl", "ttcn", "ttcnpp"]
+LIZARD_SUPPORTED_LANGUAGES = ["java"]
 # How many tokens such as: "if", "(", "abc", "%", "4", ")" must be repeated to appear in duplicate detection list
 MIN_DUP_TOKENS = 70
 
@@ -37,6 +35,7 @@ def analyze(path, filenameList):
 
 # Runs lizard on each individual file designated in the given filenameList.
 def runLizard(filenameList):
+    print("nb of java files to analyze :", len(filenameList))
     duplicates = DuplicateDetector()
     cpre = lizardcpre()
     nd = lizardnd()
