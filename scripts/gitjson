@@ -10,6 +10,7 @@
 import json
 import subprocess
 import sys
+import os
 
 USAGE = '''
  Usage:
@@ -196,6 +197,13 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == '--help':
         usage()
         sys.exit(0)
+
+    # Retrive the repository and store it in a variable
+    # Then we clear the variable in order not to be added to command
+    # Finally, cd to the given repository
+    repo_to_cd = sys.argv[3].split("=")[1]
+    del sys.argv[3]
+    os.chdir(repo_to_cd)
 
     # Find the git command name, which is the first argument not prefixed with
     # a dash, and not containing an equal sign.
