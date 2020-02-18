@@ -31,12 +31,22 @@ def get_EV_in_docker_compose(file):
 
 def count_nb_of_EV_docker_compose(line_index, lines, ev_list):
     next_line_index = line_index + 1
-    if ': ' in lines[next_line_index]:
-        ev_list.append(lines[next_line_index].split(': ')[0].strip())
-        next_line_index += 1
-        ev_list.extend(count_nb_of_EV_docker_compose(next_line_index, lines, ev_list))
+    line = lines[next_line_index]
+    if ': ' in line and is_line_a_DC_keyword(line):
+        ev_list.append(line.split(': ')[0].strip())
+        if next_line_index < len(lines)-1:
+            next_line_index += 1
+            ev_list.extend(count_nb_of_EV_docker_compose(next_line_index, lines, ev_list))
     return ev_list
 
+def is_line_a_DC_keyword(line):
+    if 'env_file' in line:
+        return True
+    if 'restart' in line:
+        return True
+    if 'entry_point' in line:
+        return True
+    return False
 
 def count_EV(files_paths):
     EV = []
@@ -62,6 +72,6 @@ def list_of_EV():
 
 if __name__ == "__main__":
     os.system("pwd")
-    os.chdir('../../../thingsboard')
+    os.chdir('../../../magma')
     print(list_of_EV())
     print(get_nb_of_EV())
