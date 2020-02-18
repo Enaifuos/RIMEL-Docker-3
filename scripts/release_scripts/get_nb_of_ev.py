@@ -32,7 +32,7 @@ def get_EV_in_docker_compose(file):
 def count_nb_of_EV_docker_compose(line_index, lines, ev_list):
     next_line_index = line_index + 1
     if ': ' in lines[next_line_index]:
-        ev_list.append(lines[next_line_index].split(': ')[0])
+        ev_list.append(lines[next_line_index].split(': ')[0].strip())
         next_line_index += 1
         ev_list.extend(count_nb_of_EV_docker_compose(next_line_index, lines, ev_list))
     return ev_list
