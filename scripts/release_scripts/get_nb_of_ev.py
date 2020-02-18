@@ -39,27 +39,25 @@ def count_nb_of_EV_docker_compose(line_index, lines, ev_list):
 
 
 def count_EV(files_paths):
-    nb_EV = 0
     EV = []
     for file_path in files_paths:
         file = open(file_path, 'r')
         if '.env' in file_path:
             for line in file:
                 if is_EV(line):
-                    nb_EV += 1
                     EV.append(line.split("=")[0])
         if 'docker-compose' in file_path:
             nb_EV_in_DC = get_EV_in_docker_compose(file_path)
-            nb_EV += len(nb_EV_in_DC)
             EV.extend(nb_EV_in_DC)
-    return nb_EV, EV
+    EV = list(dict.fromkeys(EV))
+    return EV
 
 def get_nb_of_EV():
     return len(list_of_EV())
 
 def list_of_EV():
     files = get_EV_declaration_files('.')
-    nb_EV, EV = count_EV(files)
+    EV = count_EV(files)
     return EV
 
 if __name__ == "__main__":
