@@ -55,9 +55,7 @@ def count_EV(files_paths):
     return nb_EV, EV
 
 def get_nb_of_EV():
-    files = get_EV_declaration_files('.')
-    nb_EV, EV = count_EV(files)
-    return nb_EV
+    return len(list_of_EV())
 
 def list_of_EV():
     files = get_EV_declaration_files('.')
