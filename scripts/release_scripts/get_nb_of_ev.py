@@ -19,14 +19,21 @@ def get_EV_declaration_files():
 
 def count_EV(files_paths):
     nb_EV = 0
+    EV = []
     for file_path in files_paths:
         file = open(file_path, 'r')
         for line in file:
             if is_EV(line):
                 nb_EV += 1
-    return nb_EV
+                EV.append(line.split("=")[0])
+    return nb_EV, EV
 
 def get_nb_of_EV():
-    files = get_EV_declaration_files();
-    return count_EV(files)
+    files = get_EV_declaration_files()
+    nb_EV, EV = count_EV(files)
+    return nb_EV
 
+def list_of_EV():
+    files = get_EV_declaration_files()
+    nb_EV, EV = count_EV(files)
+    return EV

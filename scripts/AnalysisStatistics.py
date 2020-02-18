@@ -23,7 +23,7 @@ def getStatisticsFromAllFiles(jsonOutputData):
 
     for item in jsonOutputData['files']:
         nb_files += 1
-        if item['filetype'] == 'java':
+        if item['filetype'] == 'java' or item['filetype'] == 'js':
             for metric in item['functions']:
                 metricsMap['startLine'].append(metric['startLine'])
                 metricsMap['nloc'].append(metric['nloc'])
@@ -56,7 +56,6 @@ def getStatisticsFromAllFiles(jsonOutputData):
 
 
     return statisticsMap
-
 
 
 def plotStatistics(dictStatistics):
