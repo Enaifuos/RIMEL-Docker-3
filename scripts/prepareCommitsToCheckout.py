@@ -29,6 +29,16 @@ def getAllFilteredSHA(loadedJSON) :
 	EVENTUAL BUG : IF THE FIRST COMMIT BELONGS TO THE FILTERED COMMITS, THIS METHOD SUCKS !!!
 '''
 def getListOfPreviousOrNextSHA(allCommits, filteredSHA, previous=True) :
+	#print(allCommits)
+	print("________________\n")
+	print("________________\n")
+	print("________________\n")
+	print(filteredSHA)
+	print("________________\n")
+	print("________________\n")
+	print("________________\n")
+	print("________________\n")
+
 	takePreviousBoolean = False
 	result = {}
 	for key in allCommits:
@@ -102,12 +112,5 @@ else :
 	# write output in JSON file
 	with open(outputFile, 'w') as outputFileName:
 		json.dump(dictionary, outputFileName)
-
-
-#	x = ('a', 'b', 'c')
-#	z = ('x' ,'y', 'z')
-#	l = [x, z]
-#	j=json.dumps(l)
-#	print(j)
 
 	

@@ -4,10 +4,10 @@
 
 # output: hmtl website to analyze code analysis results found ./code-quality-assistant directory
 
-from AnalysisScript import runAnalysis
-from AnalysisStatistics import nb_files
-from AnalysisStatistics import getStatisticsFromAllFiles
-from AnalysisStatistics import getDiffPercentages
+#from AnalysisScript import runAnalysis
+#from AnalysisStatistics import nb_files
+#from AnalysisStatistics import getStatisticsFromAllFiles
+#from AnalysisStatistics import getDiffPercentages
 from release_scripts import get_nb_of_ev
 from prepareCommitsToCheckout import getListOfPreviousOrNextSHA
 
@@ -34,7 +34,7 @@ def getCommitsWhereKeywordsAppear(repoDir, keywordList):
     filteredCommits = {}
     for key in keywordList :
         g = git.cmd.Git(repoDir)
-        filteredCommits[key] = (g.log(S=key, pretty="%H")).split('\n')
+        filteredCommits[key] = (g.log(S=key, pretty="%h")).split('\n')
     return filteredCommits
 
 def getPreviousCommit(allCommits, filteredCommits):
@@ -64,9 +64,23 @@ def getPreviousCommit(allCommits, filteredCommits):
 # allcommits = getAllCommitsJSONFormat("/home/passport/Repos/tmp/thingsboard")
 # print(allcommits)
 
-filteredCommits = getCommitsWhereKeywordsAppear("/home/passport/Repos/tmp/thingsboard", ["DEVICE_LABEL_PROPERTY"])
-print(getAllEVfromRepo("/home/passport/Repos/tmp/thingsboard"))
-getListOfPreviousOrNextSHA(getAllCommitsJSONFormat("/home/passport/Repos/tmp/thingsboard"), filteredCommits)
+filteredCommits = getCommitsWhereKeywordsAppear("~/Desktop/thingsboard/", ["KAFKA", "DEVICE_LABEL_PROPERTY"])
+print(filteredCommits)
+output = {}
+#print(getAllEVfromRepo("~/Desktop/thingsboard/"))
+for filteredCommit in filteredCommits :
+    valueList = []
+    listOfCommits = getListOfPreviousOrNextSHA(getAllCommitsJSONFormat("~/Desktop/thingsboard/"), filteredCommits[filteredCommit])
+
+    for commit in listOfCommits :
+        innerDict = {}
+        innerDict["actual"] = commit
+        innerDict["previous"] = listOfCommits[commit]
+        valueList.append(innerDict)
+
+    output[filteredCommit] = valueList
+    
+print(output)
 
 
 #
