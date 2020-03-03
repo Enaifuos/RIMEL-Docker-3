@@ -29,15 +29,6 @@ def getAllFilteredSHA(loadedJSON) :
 	EVENTUAL BUG : IF THE FIRST COMMIT BELONGS TO THE FILTERED COMMITS, THIS METHOD SUCKS !!!
 '''
 def getListOfPreviousOrNextSHA(allCommits, filteredSHA, previous=True) :
-	#print(allCommits)
-	print("________________\n")
-	print("________________\n")
-	print("________________\n")
-	print(filteredSHA)
-	print("________________\n")
-	print("________________\n")
-	print("________________\n")
-	print("________________\n")
 
 	takePreviousBoolean = False
 	result = {}
@@ -59,7 +50,7 @@ def getListOfPreviousOrNextSHA(allCommits, filteredSHA, previous=True) :
 		else :
 			break
 
-
+	print(filteredSHA)
 	if len(filteredSHA) > 0 :
 		raise Exception("ERROR IN getListOfPreviousSHA() : filteredSHA list is NOT empty !")
 
