@@ -66,41 +66,21 @@ def getPreviousAndNext(allCommits, CommitsContainsEV):
 
 def getFilesAndMethodsModified(jsonEntry, repoDir):
     i = 1
-    finalList = {}
+    finalDict = {}
     for key in jsonEntry:
-        finalList[key] = []
-        print(key)
+        finalDict[key] = []
+
+
         for jsonObject in jsonEntry[key]:
             g = git.cmd.Git(repoDir)
             modifiedFiles = g.diff("--name-only", jsonObject["previous"],  jsonObject["actual"]).split("\n")
             filteredFileList = [el for el in modifiedFiles if ((".java" in el) or (".py" in el) or ((".js" in el) and not (".json" in el)))]
             g.checkout(jsonObject["actual"])
 
-            finalList[key] += filterFilesContainingKeyword(filteredFileList, key, repoDir)
+            finalDict[key].append({"files": filterFilesContainingKeyword(filteredFileList, key, repoDir), "previous": jsonObject['previous'], "actual": jsonObject["actual"]})
 
 
             g.checkout("master")
             i = i +1
 
-    print(finalList)
-
-
-def getFilesAndMethodsModified(jsonEntry, repoDir):
-    i = 1
-
-    finalList = {}
-    for key in jsonEntry:
-        finalList[key] = []
-        print(key)
-        for jsonObject in jsonEntry[key]:
-            g = git.cmd.Git(repoDir)
-            modifiedFiles = g.diff("--name-only", jsonObject["previous"],  jsonObject["actual"]).split("\n")
-            filteredFileList = [el for el in modifiedFiles if ((".java" in el) or (".py" in el) or ((".js" in el) and not (".json" in el)))]
-            g.checkout(jsonObject["actual"])
-
-            finalList[key] += filterFilesContainingKeyword(filteredFileList, key, repoDir)
-
-
-            g.checkout("master")
-            i = i +1
-    return finalList
+    return finalDict

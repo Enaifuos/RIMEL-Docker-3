@@ -32,7 +32,6 @@ def getListOfPreviousOrNextSHA(allCommits, filteredSHA, previous=True) :
 
 	takePreviousBoolean = False
 	result = {}
-	print("$$$$$previous", previous)
 	for key in allCommits:
 		if len(filteredSHA) > 0 :
 
@@ -50,9 +49,6 @@ def getListOfPreviousOrNextSHA(allCommits, filteredSHA, previous=True) :
 				takePreviousBoolean = True
 		else :
 			break
-
-	print(filteredSHA)
-
 
 	return result
 	
