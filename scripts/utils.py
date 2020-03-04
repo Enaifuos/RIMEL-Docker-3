@@ -105,3 +105,20 @@ def startAnalysis(jsonEntry, repoDir):
             print(onlyexistingfiles)
             res = analyze(repoDir, onlyexistingfiles)
             print(res)
+
+def deleteEntriesWithEmptyFilesList(jsonstring) :
+    filteredObject = {}
+
+    for ev in jsonstring :
+        filteredObject[ev] = []
+        entryObject = None
+        
+        for entry in jsonstring[ev] :
+            if (len(entry['files']) > 0): 
+                entryObject = {"files": entry['files'], "previous": entry['previous'], "actual": entry['actual']} 
+                filteredObject[ev].append(entryObject)
+
+        if entryObject is None :
+            del filteredObject[ev]
+
+    return filteredObject

@@ -3,7 +3,7 @@ import time
 
 
 from scripts.utils import getAllEVfromRepo, getCommitsWhereKeywordsAppear, getAllCommitsJSONFormat, getPreviousAndNext, \
-    getFilesAndMethodsModified, startAnalysis
+    getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList
 
 print("---------------------------------------")
 cwd = os.getcwd()
@@ -56,10 +56,11 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 print(" 5/8 -  Get files where EV where touched")
 filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
-print(filesToAnalyze)
+print(deleteEntriesWithEmptyFilesList(filesToAnalyze))
+#print(filesToAnalyze)
 print("--- %s seconds ---" % (time.time() - start_time))
 
-
+'''
 print(" 6/8  -  Analysing code (complexity, nloc..)")
 print("not implemented")
 analysis = startAnalysis(filesToAnalyze, REPO)
@@ -81,3 +82,4 @@ print("--- %s seconds ---" % (time.time() - start_time))
 print("\n---------------------------------------------------")
 print("--- %s total time ---" % (time.time() - start_time))
 print("---------------------------------------------------")
+'''
