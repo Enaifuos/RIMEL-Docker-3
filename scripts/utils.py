@@ -1,7 +1,10 @@
 import os
 import json
+from os import path
+
 import git
 
+from scripts.AnalysisScript import analyze
 from scripts.prepareCommitsToCheckout import getListOfPreviousOrNextSHA
 
 cwd = os.getcwd()
@@ -70,9 +73,8 @@ def getFilesAndMethodsModified(jsonEntry, repoDir):
     for key in jsonEntry:
         finalDict[key] = []
 
-
+        g = git.cmd.Git(repoDir)
         for jsonObject in jsonEntry[key]:
-            g = git.cmd.Git(repoDir)
             modifiedFiles = g.diff("--name-only", jsonObject["previous"],  jsonObject["actual"]).split("\n")
             filteredFileList = [el for el in modifiedFiles if ((".java" in el) or (".py" in el) or ((".js" in el) and not (".json" in el)))]
             g.checkout(jsonObject["actual"])
@@ -84,3 +86,22 @@ def getFilesAndMethodsModified(jsonEntry, repoDir):
             i = i +1
 
     return finalDict
+
+def filterListByFilesThatExists(filelist, repo):
+    print(filelist)
+    filtered = []
+    for file in filelist:
+        if(path.exists(repo + "/" + file)):
+            filtered.append(file)
+    return filtered
+
+
+def startAnalysis(jsonEntry, repoDir):
+    g = git.cmd.Git(repoDir)
+    for key in jsonEntry:
+        for jsonBlob in jsonEntry[key]:
+            g.checkout(jsonBlob["previous"])
+            onlyexistingfiles = filterListByFilesThatExists(jsonBlob["files"], repoDir)
+            print(onlyexistingfiles)
+            res = analyze(repoDir, onlyexistingfiles)
+            print(res)
