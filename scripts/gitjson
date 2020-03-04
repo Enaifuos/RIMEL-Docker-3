@@ -30,8 +30,9 @@ USAGE = '''
         t : tree hash
 '''
 
+
 def usage():
-    print USAGE
+    print(USAGE)
 
 
 # Remove one or more elements from an list of strings, matching on prefix.
@@ -104,7 +105,7 @@ def git_shortlog(args, json_flags):
     else:
         pass
 
-    print json.dumps(author_entries)
+    print(json.dumps(author_entries))
 
 
 # Run git log, passing along the original command-line arguments (as 'args').
@@ -130,7 +131,7 @@ def git_log(args, json_flags):
     try:
         output = subprocess.check_output(['git'] + args)
     except Exception as e:
-        print e
+        print(e)
 
     # Step through output, parsing each commit.
     commits = []
@@ -145,13 +146,13 @@ def git_log(args, json_flags):
         i += 1  # Skip the START_OF_COMMIT marker.
 
         sha = lines[i]
-        name = lines[i+1]
-        email = lines[i+2]
-        date = lines[i+3]
-        date_iso = lines[i+4]
-        parents = lines[i+5].split(' ')
-        tree = lines[i+6]
-        subject = lines[i+7]
+        name = lines[i + 1]
+        email = lines[i + 2]
+        date = lines[i + 3]
+        date_iso = lines[i + 4]
+        parents = lines[i + 5].split(' ')
+        tree = lines[i + 6]
+        subject = lines[i + 7]
         i += 8
 
         files = []
@@ -188,7 +189,7 @@ def git_log(args, json_flags):
 
         commits.append(commit)
 
-    print json.dumps(commits)
+    print(json.dumps(commits))
 
 
 if __name__ == '__main__':

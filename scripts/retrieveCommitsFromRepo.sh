@@ -17,7 +17,7 @@ then
 	echo "Retrieving commits from the repository $1"
 	echo "Output will be stored in $2"
 
-	./gitjson log --json=haeds --repo=$1 > $2
+	./scripts/gitjson log --json=haeds --repo=$1 > $2
 else
 	echo "Give repository path as argument :\n RUN : ./retrieveCommitsFromRepo.sh ~/Desktop/repositories/repository/to/analyse outputFileName.json"
 fi
