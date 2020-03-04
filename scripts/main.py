@@ -14,6 +14,7 @@ from prepareCommitsToCheckout import getListOfPreviousOrNextSHA
 import os
 import json
 import git
+import time
 
 print("---------------------------------------")
 cwd = os.getcwd()
@@ -43,16 +44,22 @@ def getCommitsWhereKeywordsAppear(repoDir, keywordList):
         filteredCommits[key] = (g.log(S=key, pretty="%h")).split('\n')
     return filteredCommits
 
-def getPreviousCommit(allCommits, filteredCommits):
-        print(getListOfPreviousOrNextSHA(allCommits, filteredCommits))
+
 
 def filterFilesContainingKeyword(fileList, keyword, repoDir):
     filterFiles = []
     for file in fileList:
-        with open(repoDir + "/" + file, 'r') as myfile:
-            data = myfile.read()
-            if (keyword in data):
-                filterFiles.append(file)
+        try:
+            with open(repoDir + "/" + file, 'r') as myfile:
+                print("found ------------- " + file)
+
+                data = myfile.read()
+                if (keyword in data):
+                    filterFiles.append(file)
+        except FileNotFoundError:
+            print("filenotfound ------------- " + file)
+
+
 
     return filterFiles
 
@@ -80,7 +87,7 @@ def filterFilesContainingKeyword(fileList, keyword, repoDir):
 # allcommits = getAllCommitsJSONFormat("/home/passport/Repos/tmp/thingsboard")
 # print(allcommits)
 
-filteredCommits = getCommitsWhereKeywordsAppear("/home/passport/Repos/tmp/thingsboard", ["KAFKA", "DEVICE_LABEL_PROPERTY"])
+filteredCommits = getCommitsWhereKeywordsAppear("/home/passport/Repos/tmp/thingsboard", ["kafka", "DEVICE_LABEL_PROPERTY"])
 
 print("-----------------------------------------------")
 print("filtered commits where keywords appear  : \n" + str(filteredCommits))
@@ -91,7 +98,7 @@ output = {}
 #print(getAllEVfromRepo("~/Desktop/thingsboard/"))
 for filteredCommit in filteredCommits :
     valueList = []
-    listOfCommits = getListOfPreviousOrNextSHA(getAllCommitsJSONFormat("/home/passport/Repos/tmp/thingsboard"), filteredCommits[filteredCommit])
+    listOfCommits = getListOfPreviousOrNextSHA(getAllCommitsJSONFormat("/home/passport/Repos/tmp/thingsboard"), filteredCommits[filteredCommit], True)
 
     for commit in listOfCommits :
         innerDict = {}
@@ -107,23 +114,28 @@ print("-----------------------------------------------")
 
 
 
-
 def getFilesAndMethodsModified(jsonEntry, repoDir):
-    print("-----------------------------------------------")
-    print("getFilesAndMethodsModified")
-    print("repoDir : " + repoDir)
-    print("-----------------------------------------------")
+    i = 1
+
+    finalList = {}
     for key in jsonEntry:
+        finalList[key] = []
         print(key)
         for jsonObject in jsonEntry[key]:
+            print(i)
             g = git.cmd.Git(repoDir)
-            modifiedFiles = g.diff("--name-only",  jsonObject["previous"], jsonObject["actual"]).split("\n")
-            print("modified files: " + str(modifiedFiles))
+            modifiedFiles = g.diff("--name-only", jsonObject["previous"],  jsonObject["actual"]).split("\n")
             filteredFileList = [el for el in modifiedFiles if ((".java" in el) or (".py" in el) or ((".js" in el) and not (".json" in el)))]
             g.checkout(jsonObject["actual"])
-            filteredFileList2 = filterFilesContainingKeyword(filteredFileList, key, repoDir)
-            print(filteredFileList2)
+
+            finalList[key] += filterFilesContainingKeyword(filteredFileList, key, repoDir)
+
+
             g.checkout("master")
+            i = i +1
+
+    print(finalList)
+
 
 getFilesAndMethodsModified(output, "/home/passport/Repos/tmp/thingsboard")
 
