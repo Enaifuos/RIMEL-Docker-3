@@ -30,27 +30,27 @@ print("---------------------------------------")
 REPO = "/home/passport/Repos/tmp/thingsboard"
 
 
-# Get VE from Project
+print(" 1/6  -  Get VE from Project")
 EVs = getAllEVfromRepo(REPO)
 # print(EVs)
 
-# Get all commits in json format
+print(" 2/6  -  Get all commits in json format")
 allCommitsJSONFormat = getAllCommitsJSONFormat(REPO, "thingsboard.json")
 # print(allCommitsJSONFormat)
 
-# Get commits where EV appears
-commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, ["kafka", "DEVICE_LABEL_PROPERTY"])
+print(" 3/6  -  Get commits where EV appears")
+commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, EVs)
 # print(commitsWhereEVsAppears)
 
-# Get commits where EV appears
-commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, ["kafka", "DEVICE_LABEL_PROPERTY"])
+print(" 4/6  -  Get commits where EV appears")
+commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, EVs)
 # print(commitsWhereEVsAppears)
 
-# Get previous and next of each filtered commit
+print(" 5/6  -  Get previous and next of each filtered commit")
 jsonPreviousNextCommit = getPreviousAndNext(allCommitsJSONFormat, commitsWhereEVsAppears)
 # print (jsonPreviousNextCommit)
 
-# Get files where EV where touched
+print(" 6/6  -  Get files where EV where touched")
 filesmodified = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
 print(filesmodified)
 
