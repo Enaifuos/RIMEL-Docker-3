@@ -95,6 +95,13 @@ def filterListByFilesThatExists(filelist, repo):
             filtered.append(file)
     return filtered
 
+def filterListByFilesThatExistsWithoutRepo(filelist):
+    print(filelist)
+    filtered = []
+    for file in filelist:
+        if(path.exists(file)):
+            filtered.append(file)
+    return filtered
 
 def startAnalysis(jsonEntry, repoDir):
     g = git.cmd.Git(repoDir)

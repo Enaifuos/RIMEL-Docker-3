@@ -23,6 +23,8 @@ MIN_DUP_TOKENS = 70
 
 # analyzes all files, with lizard, provided in list and returns a json string of the raw data
 def analyze(path, filenameList):
+    print("analyze")
+    print(filenameList)
     lizOut = runLizard(filenameList)
     asDict = filesInfoToDict(path, lizOut)
 
@@ -35,7 +37,9 @@ def analyze(path, filenameList):
 
 # Runs lizard on each individual file designated in the given filenameList.
 def runLizard(filenameList):
+    print("runLizard")
     print("nb of java files to analyze :", len(filenameList))
+    print(filenameList)
     duplicates = DuplicateDetector()
     cpre = lizardcpre()
     nd = lizardnd()
@@ -107,6 +111,13 @@ def runAnalysis(dir):
     jsonData = analyze(path, filenameList)
     formattedJson = json.loads(jsonData)
     return(formattedJson)
+
+# runs it all. This is called down below.
+def runAnalysisFiles(repo, filenameList):
+    jsonData = analyze(repo, filenameList)
+    formattedJson = json.loads(jsonData)
+    return(formattedJson)
+
 
 # returns the input string if no errors, signals error and quits else
 def checkPathExists(dir):

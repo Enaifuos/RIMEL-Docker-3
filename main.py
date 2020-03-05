@@ -1,9 +1,12 @@
 import os
 import time
 
+import git
+import lizard
 
+from scripts.AnalysisScript import runAnalysisFiles, runLizard
 from scripts.utils import getAllEVfromRepo, getCommitsWhereKeywordsAppear, getAllCommitsJSONFormat, getPreviousAndNext, \
-    getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList
+    getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList, filterListByFilesThatExistsWithoutRepo
 
 print("---------------------------------------")
 cwd = os.getcwd()
@@ -56,18 +59,46 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 print(" 5/8 -  Get files where EV where touched")
 filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
-print(deleteEntriesWithEmptyFilesList(filesToAnalyze))
-#print(filesToAnalyze)
+filteredFilesToAnalyze = deleteEntriesWithEmptyFilesList(filesToAnalyze)
 print("--- %s seconds ---" % (time.time() - start_time))
 
-'''
+
 print(" 6/8  -  Analysing code (complexity, nloc..)")
 print("not implemented")
-analysis = startAnalysis(filesToAnalyze, REPO)
-print(analysis)
-print("--- %s seconds ---" % (time.time() - start_time))
+
+g = git.cmd.Git(REPO)
 
 
+for key in filteredFilesToAnalyze:
+    for jsonEntry in filteredFilesToAnalyze[key]:
+
+        # checkout actual, recuperer les analyses de tout les fichiers en actual
+        g.checkout(jsonEntry["actual"])
+        fileListToAnalyze = []
+        for file in jsonEntry["files"]:
+            fileListToAnalyze.append(REPO + "/" +file)
+            jsonEntry["actualAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
+
+        # checkout actual, recuperer les analyses de tout les fichiers en actual
+        g.checkout(jsonEntry["previous"])
+        fileListToAnalyze = []
+
+        existingFileList = filterListByFilesThatExistsWithoutRepo(jsonEntry["files"])
+        jsonEntry["previousAnalysis"] = {}
+        for file in existingFileList:
+            fileListToAnalyze.append(REPO + "/" +file)
+            jsonEntry["previousAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
+        g.checkout(jsonEntry["previous"])
+
+print(filteredFilesToAnalyze)
+# print(deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
+# os.chdir(REPO)
+# analysis = runAnalysisFiles(REPO, deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
+# print(analysis)
+# print("--- %s seconds ---" % (time.time() - start_time))
+
+
+'''
 print(" 7/8  -  Generating statistics")
 print("not implemented")
 print("--- %s seconds ---" % (time.time() - start_time))
