@@ -3,25 +3,34 @@
 
 import os
 
-def is_EV(line):
-    if line[0] == '#' or not line.strip():
-        return False
-    else:
-        return True
-
 def get_EV_declaration_files(current_path):
     files = []
     for r, d, f in os.walk(current_path):
         for file in f:
-            if '.env' in file:
+            if is_env_file(file):
                 files.append(os.path.join(r, file))
-            if 'docker-compose' in file:
+            if is_docker_compose_file(file):
                 files.append(os.path.join(r, file))
     return files
 
-def get_EV_in_docker_compose(file):
+def is_env_file(file):
+    if '.env' in file or '_env' in file:
+        if 'envoy' in file:
+            return False
+        return True
+    else:
+        return False
+
+def is_docker_compose_file(file):
+    if 'docker-compose' in file:
+        if 'docker-compose.template' not in file and 'docker-compose.test' not in file:
+            return True
+    return False
+
+
+
+def get_EV_in_docker_compose(f):
     env_list = []
-    f = open(file, 'r')
     lines = [line for line in f]
     for line_index in range(0, len(lines)):
         line = lines[line_index]
@@ -32,33 +41,56 @@ def get_EV_in_docker_compose(file):
 def count_nb_of_EV_docker_compose(line_index, lines, ev_list):
     next_line_index = line_index + 1
     line = lines[next_line_index]
-    if ': ' in line and is_line_a_DC_keyword(line):
-        ev_list.append(line.split(': ')[0].strip())
+
+    bool, delimiter, line = get_delimiter(line)
+    if bool:
+        var = line.split(delimiter)[0].strip()
+        if check(var, ev_list):
+            ev_list.append(var)
         if next_line_index < len(lines)-1:
-            next_line_index += 1
+            pass
             ev_list.extend(count_nb_of_EV_docker_compose(next_line_index, lines, ev_list))
+
     return ev_list
 
-def is_line_a_DC_keyword(line):
+def get_delimiter(line):
+    if ': ' in line:
+        return True, ': ', line
+    if '=' in line:
+        return True, '=', line.split('-')[1]
+    else:
+        return False, '', line
+
+def check(line, ev_list):
     if 'env_file' in line:
-        return True
+        return False
     if 'restart' in line:
-        return True
+        return False
     if 'entry_point' in line:
-        return True
-    return False
+        return False
+    if 'command' in line:
+        return False
+    if '#' in line:
+        return False
+    if not line.strip():
+        return False
+    if line in ev_list:
+        return False
+    return True
 
 def count_EV(files_paths):
     EV = []
     for file_path in files_paths:
         file = open(file_path, 'r')
-        if '.env' in file_path:
+        if '.env' in file.name or '_env' in file.name:
             for line in file:
-                if is_EV(line):
+                ve = line.split("=")[0]
+                if check(ve, EV):
                     EV.append(line.split("=")[0])
-        if 'docker-compose' in file_path:
-            nb_EV_in_DC = get_EV_in_docker_compose(file_path)
+        if 'docker-compose' in file.name:
+            nb_EV_in_DC = get_EV_in_docker_compose(file)
             EV.extend(nb_EV_in_DC)
+        file.close()
     EV = list(dict.fromkeys(EV))
     return EV
 
@@ -70,8 +102,32 @@ def list_of_EV():
     EV = count_EV(files)
     return EV
 
+def do(project):
+    print(project)
+    os.system('git checkout master')
+    ev_list = list(dict.fromkeys(list_of_EV()))
+    print(ev_list)
+    print(len(ev_list))
+
 if __name__ == "__main__":
     os.system("pwd")
-    os.chdir('../../../magma')
-    print(list_of_EV())
-    print(get_nb_of_EV())
+    os.chdir('../..')
+
+    # os.chdir('../magma')
+    # do('MAGMA')
+    # #104
+    #
+    # os.chdir('../thingsboard')
+    # do('THINGSBOARD')
+    # #63
+    #
+    # os.chdir('../openmrs-sdk')
+    # do('OPENMRS-SDK')
+    # #16
+    #
+    # os.chdir('../skywalking')
+    # do('SKYWALKING')
+    # #6
+
+    os.chdir('../elasticsearch')
+    do('ELASTIC')
