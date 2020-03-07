@@ -48,7 +48,6 @@ def count_nb_of_EV_docker_compose(line_index, lines, ev_list):
         if check(var, ev_list):
             ev_list.append(var)
         if next_line_index < len(lines)-1:
-            pass
             ev_list.extend(count_nb_of_EV_docker_compose(next_line_index, lines, ev_list))
 
     return ev_list
