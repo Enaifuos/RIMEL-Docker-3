@@ -32,25 +32,29 @@ def is_docker_compose_file(file):
 def get_EV_in_docker_compose(f):
     env_list = []
     lines = [line for line in f]
+    is_in_environment = True
     for line_index in range(0, len(lines)):
         line = lines[line_index]
         if 'environment' in line:
-            env_list.extend(count_nb_of_EV_docker_compose(line_index, lines, []))
+            is_in_environment = True
+        else:
+            if is_in_environment:
+                new_ev = count_nb_of_EV_docker_compose(line_index, lines)
+                if new_ev is None:
+                    is_in_environment = False
+                else:
+                    env_list.append(new_ev)
     return env_list
 
-def count_nb_of_EV_docker_compose(line_index, lines, ev_list):
-    next_line_index = line_index + 1
-    line = lines[next_line_index]
+def count_nb_of_EV_docker_compose(line_index, lines):
+    line = lines[line_index]
 
     bool, delimiter, line = get_delimiter(line)
     if bool:
         var = line.split(delimiter)[0].strip()
-        if check(var, ev_list):
-            ev_list.append(var)
-        if next_line_index < len(lines)-1:
-            ev_list.extend(count_nb_of_EV_docker_compose(next_line_index, lines, ev_list))
-
-    return ev_list
+        if check(var):
+            return var
+    return None
 
 def get_delimiter(line):
     if ': ' in line:
@@ -60,7 +64,7 @@ def get_delimiter(line):
     else:
         return False, '', line
 
-def check(line, ev_list):
+def check(line):
     if 'env_file' in line:
         return False
     if 'restart' in line:
@@ -73,8 +77,6 @@ def check(line, ev_list):
         return False
     if not line.strip():
         return False
-    if line in ev_list:
-        return False
     return True
 
 def count_EV(files_paths):
@@ -84,7 +86,7 @@ def count_EV(files_paths):
         if '.env' in file.name or '_env' in file.name:
             for line in file:
                 ve = line.split("=")[0]
-                if check(ve, EV):
+                if check(ve):
                     EV.append(line.split("=")[0])
         if 'docker-compose' in file.name:
             nb_EV_in_DC = get_EV_in_docker_compose(file)
@@ -104,6 +106,7 @@ def list_of_EV():
 def do(project):
     print(project)
     os.system('git checkout master')
+    #os.system('git pull')
     ev_list = list(dict.fromkeys(list_of_EV()))
     print(ev_list)
     print(len(ev_list))
@@ -112,21 +115,22 @@ if __name__ == "__main__":
     os.system("pwd")
     os.chdir('../..')
 
-    # os.chdir('../magma')
-    # do('MAGMA')
-    # #104
-    #
-    # os.chdir('../thingsboard')
-    # do('THINGSBOARD')
-    # #63
-    #
-    # os.chdir('../openmrs-sdk')
-    # do('OPENMRS-SDK')
-    # #16
-    #
-    # os.chdir('../skywalking')
-    # do('SKYWALKING')
-    # #6
+    os.chdir('../magma')
+    do('MAGMA')
+    #104
+
+    os.chdir('../thingsboard')
+    do('THINGSBOARD')
+    #64
+
+    os.chdir('../openmrs-sdk')
+    do('OPENMRS-SDK')
+    #16
+
+    os.chdir('../skywalking')
+    do('SKYWALKING')
+    #8
 
     os.chdir('../elasticsearch')
     do('ELASTIC')
+    #42
