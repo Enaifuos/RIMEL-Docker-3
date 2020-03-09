@@ -80,6 +80,7 @@ def check(line):
     return True
 
 def count_EV(files_paths):
+    os.system('pwd')
     EV = []
     for file_path in files_paths:
         file = open(file_path, 'r')
