@@ -97,6 +97,14 @@ def filterListByFilesThatExistsWithoutRepo(repo, filelist):
             filtered.append(file)
     return filtered
 
+def startAnalysis(jsonEntry, repoDir):
+    g = git.cmd.Git(repoDir)
+    for key in jsonEntry:
+        for jsonBlob in jsonEntry[key]:
+            g.checkout(jsonBlob["previous"])
+            onlyexistingfiles = filterListByFilesThatExists(jsonBlob["files"], repoDir)
+            res = analyze(repoDir, onlyexistingfiles)
+
 def deleteEntriesWithEmptyFilesList(jsonstring) :
     filteredObject = {}
 

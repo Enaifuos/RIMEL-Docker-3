@@ -23,8 +23,6 @@ MIN_DUP_TOKENS = 70
 
 # analyzes all files, with lizard, provided in list and returns a json string of the raw data
 def analyze(path, filenameList):
-    print("analyze")
-    print(filenameList)
     lizOut = runLizard(filenameList)
     asDict = filesInfoToDict(path, lizOut)
 

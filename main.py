@@ -35,7 +35,7 @@ print("---------------------------------------")
 
 
 #REPO = "/home/passport/Repos/tmp/thingsboard"
-REPO = "/home/passport/Repos/tmp/openmrs-sdk"
+REPO = "/home/passport/Repos/tmp/magma"
 
 
 print(" 1/8  -  Get VE from Project")
