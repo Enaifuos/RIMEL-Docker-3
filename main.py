@@ -5,6 +5,7 @@ import git
 import lizard
 
 from scripts.AnalysisScript import runAnalysisFiles, runLizard
+from scripts.AnalysisStatistics import getStatisticsFromAllFiles
 from scripts.utils import getAllEVfromRepo, getCommitsWhereKeywordsAppear, getAllCommitsJSONFormat, getPreviousAndNext, \
     getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList, filterListByFilesThatExistsWithoutRepo
 
@@ -35,7 +36,7 @@ print("---------------------------------------")
 
 
 #REPO = "/home/passport/Repos/tmp/thingsboard"
-REPO = "/home/passport/Repos/tmp/magma"
+REPO = "/home/passport/Repos/tmp/openmrs-sdk"
 
 
 print(" 1/8  -  Get VE from Project")
@@ -93,6 +94,10 @@ for key in filteredFilesToAnalyze:
         g.checkout(jsonEntry["previous"])
 
 print(filteredFilesToAnalyze)
+
+print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["actualAnalysis"]))
+print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["previousAnalysis"]))
+
 # print(deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
 # os.chdir(REPO)
 # analysis = runAnalysisFiles(REPO, deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
