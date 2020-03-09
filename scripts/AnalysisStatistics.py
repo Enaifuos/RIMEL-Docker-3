@@ -21,6 +21,7 @@ def getStatisticsFromAllFiles(jsonOutputData):
     metricsMap['maxNestingDepth'] = []
     metricsMap['maxNestedStructures'] = []
 
+    #print(jsonOutputData['files'])
     for item in jsonOutputData['files']:
         nb_files += 1
         if item['filetype'] == 'java' or item['filetype'] == 'js':
