@@ -35,47 +35,33 @@ print("---------------------------------------")
 
 
 #REPO = "/home/passport/Repos/tmp/thingsboard"
-REPO = "/Users/soufiane/Desktop/magma"
+REPO = "/home/passport/Repos/tmp/openmrs-sdk"
+
 
 print(" 1/8  -  Get VE from Project")
 EVs = getAllEVfromRepo(REPO)
-print("_____")
-print(EVs)
-print("_____")
 print("--- %s seconds ---" % (time.time() - start_time))
 
 #EVs = ["ZOOKEEPER_URL"]
 
 print(" 2/8  -  Get all commits in json format")
 allCommitsJSONFormat = getAllCommitsJSONFormat(REPO, "thingsboard.json")
-print("__2__")
-print(allCommitsJSONFormat)
-print("__2__")
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
 print(" 3/8  -  Get commits where EV appears")
 commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, EVs)
-print("__3__")
-print(commitsWhereEVsAppears)
-print("__3__")
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
 print(" 4/8  -  Get previous and next of each filtered commit")
 jsonPreviousNextCommit = getPreviousAndNext(allCommitsJSONFormat, commitsWhereEVsAppears)
-print("__4__")
-print(jsonPreviousNextCommit)
-print("__4__")
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
 print(" 5/8 -  Get files where EV where touched")
 filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
 filteredFilesToAnalyze = deleteEntriesWithEmptyFilesList(filesToAnalyze)
-print("__5__")
-print(filteredFilesToAnalyze)
-print("__5__")
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
@@ -98,8 +84,8 @@ for key in filteredFilesToAnalyze:
         # checkout actual, recuperer les analyses de tout les fichiers en actual
         g.checkout(jsonEntry["previous"])
         fileListToAnalyze = []
+        existingFileList = filterListByFilesThatExistsWithoutRepo(REPO, jsonEntry["files"])
 
-        existingFileList = filterListByFilesThatExistsWithoutRepo(jsonEntry["files"])
         jsonEntry["previousAnalysis"] = {}
         for file in existingFileList:
             fileListToAnalyze.append(REPO + "/" +file)

@@ -37,9 +37,6 @@ def analyze(path, filenameList):
 
 # Runs lizard on each individual file designated in the given filenameList.
 def runLizard(filenameList):
-    print("runLizard")
-    print("nb of java files to analyze :", len(filenameList))
-    print(filenameList)
     duplicates = DuplicateDetector()
     cpre = lizardcpre()
     nd = lizardnd()

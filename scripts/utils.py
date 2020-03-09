@@ -72,46 +72,30 @@ def getFilesAndMethodsModified(jsonEntry, repoDir):
     finalDict = {}
     for key in jsonEntry:
         finalDict[key] = []
-
         g = git.cmd.Git(repoDir)
         for jsonObject in jsonEntry[key]:
             modifiedFiles = g.diff("--name-only", jsonObject["previous"],  jsonObject["actual"]).split("\n")
             filteredFileList = [el for el in modifiedFiles if ((".java" in el) or (".py" in el) or ((".js" in el) and not (".json" in el)))]
             g.checkout(jsonObject["actual"])
-
             finalDict[key].append({"files": filterFilesContainingKeyword(filteredFileList, key, repoDir), "previous": jsonObject['previous'], "actual": jsonObject["actual"]})
-
-
             g.checkout("master")
             i = i +1
 
     return finalDict
 
 def filterListByFilesThatExists(filelist, repo):
-    print(filelist)
     filtered = []
     for file in filelist:
         if(path.exists(repo + "/" + file)):
             filtered.append(file)
     return filtered
 
-def filterListByFilesThatExistsWithoutRepo(filelist):
-    print(filelist)
+def filterListByFilesThatExistsWithoutRepo(repo, filelist):
     filtered = []
     for file in filelist:
-        if(path.exists(file)):
+        if(path.exists(repo + "/" + file)):
             filtered.append(file)
     return filtered
-
-def startAnalysis(jsonEntry, repoDir):
-    g = git.cmd.Git(repoDir)
-    for key in jsonEntry:
-        for jsonBlob in jsonEntry[key]:
-            g.checkout(jsonBlob["previous"])
-            onlyexistingfiles = filterListByFilesThatExists(jsonBlob["files"], repoDir)
-            print(onlyexistingfiles)
-            res = analyze(repoDir, onlyexistingfiles)
-            print(res)
 
 def deleteEntriesWithEmptyFilesList(jsonstring) :
     filteredObject = {}
