@@ -1,3 +1,4 @@
+import json
 import os
 import time
 
@@ -7,7 +8,8 @@ import lizard
 from scripts.AnalysisScript import runAnalysisFiles, runLizard
 from scripts.AnalysisStatistics import getStatisticsFromAllFiles
 from scripts.utils import getAllEVfromRepo, getCommitsWhereKeywordsAppear, getAllCommitsJSONFormat, getPreviousAndNext, \
-    getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList, filterListByFilesThatExistsWithoutRepo
+    getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList, filterListByFilesThatExistsWithoutRepo, \
+    getNlocNCCStats
 
 print("---------------------------------------")
 cwd = os.getcwd()
@@ -35,12 +37,13 @@ print("---------------------------------------")
 #######################################################################
 
 
-#REPO = "/home/passport/Repos/tmp/thingsboard"
-REPO = "/home/passport/Repos/tmp/openmrs-sdk"
+REPO = "/home/passport/Repos/tmp/thingsboard"
+# REPO = "/home/passport/Repos/tmp/openmrs-sdk"
 
 
 print(" 1/8  -  Get VE from Project")
 EVs = getAllEVfromRepo(REPO)
+print(EVs)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 #EVs = ["ZOOKEEPER_URL"]
@@ -67,7 +70,6 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 
 print(" 6/8  -  Analysing code (complexity, nloc..)")
-print("not implemented")
 
 g = git.cmd.Git(REPO)
 
@@ -93,10 +95,11 @@ for key in filteredFilesToAnalyze:
             jsonEntry["previousAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
         g.checkout(jsonEntry["previous"])
 
-print(filteredFilesToAnalyze)
 
-print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["actualAnalysis"]))
-print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["previousAnalysis"]))
+
+
+# print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["actualAnalysis"]))
+# print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["previousAnalysis"]))
 
 # print(deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
 # os.chdir(REPO)
@@ -105,13 +108,14 @@ print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]
 # print("--- %s seconds ---" % (time.time() - start_time))
 
 
-'''
+
 print(" 7/8  -  Generating statistics")
-print("not implemented")
+print(getNlocNCCStats(json.dumps(filteredFilesToAnalyze)))
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
 
+'''
 print(" 8/8  -  Plotting")
 print("not implemented")
 print("--- %s seconds ---" % (time.time() - start_time))

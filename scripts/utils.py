@@ -5,6 +5,7 @@ from os import path
 import git
 
 from scripts.AnalysisScript import analyze
+from scripts.AnalysisStatistics import getStatisticsFromAllFiles
 from scripts.prepareCommitsToCheckout import getListOfPreviousOrNextSHA
 
 cwd = os.getcwd()
@@ -121,3 +122,56 @@ def deleteEntriesWithEmptyFilesList(jsonstring) :
             del filteredObject[ev]
 
     return filteredObject
+
+
+def deleteEntriesWithEmptyPreviousAnalysisKey(jsonString):
+    jsonLoaded = json.loads(jsonString)
+    keysToDelete = []
+    for key in jsonLoaded:
+        i = 0
+        for item in jsonLoaded[key]:
+            if len(item['previousAnalysis']) == 0:
+                del jsonLoaded[key][i]
+                if len(jsonLoaded[key]) == 0:
+                    # del json[key]
+                    keysToDelete.append(key)
+            i += 1
+
+    for key in keysToDelete:
+        del jsonLoaded[key]
+    return jsonLoaded
+
+
+def getNlocNCCStats(data):
+    output = deleteEntriesWithEmptyPreviousAnalysisKey(data)
+    dictAnalysis = {}
+    dictFinalCompute = {}
+
+    for key in output:
+        # dictAnalysis[key] = {"nlocTotalPrevious":{}, "nlocTotalActual":{}}
+        nlocTotalActual = 0
+        nlocTotalPrevious = 0
+        ccnTotalActual = 0
+        ccnTotalPrevious = 0
+        i = 0
+
+        for item in output[key]:
+            previousAnalysisData = getStatisticsFromAllFiles(item['previousAnalysis'])
+            actualAnalysisData = getStatisticsFromAllFiles(item['actualAnalysis'])
+
+            nlocTotalPrevious += eval(previousAnalysisData['nloc'])['avg']
+            nlocTotalActual += eval(actualAnalysisData['nloc'])['avg']
+            ccnTotalPrevious += eval(previousAnalysisData['ccn'])['avg']
+            ccnTotalActual += eval(actualAnalysisData['ccn'])['avg']
+            i += 1
+
+        dictAnalysis[key] = {"nlocTotalPrevious": (nlocTotalPrevious / i), "nlocTotalActual": (nlocTotalActual / i),
+                             "ccnTotalPrevious": (ccnTotalPrevious / i), "ccnTotalActual": (ccnTotalActual / i)}
+
+        for key in dictAnalysis:
+            dictFinalCompute[key] = {}
+            dictFinalCompute[key]["nloc"] = dictAnalysis[key]["nlocTotalActual"] - dictAnalysis[key][
+                "nlocTotalPrevious"]
+            dictFinalCompute[key]["ccn"] = dictAnalysis[key]["ccnTotalActual"] - dictAnalysis[key]["ccnTotalPrevious"]
+
+    return json.dumps(dictFinalCompute)
