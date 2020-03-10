@@ -129,10 +129,8 @@ def deleteEntriesWithEmptyPreviousAnalysisKey(jsonString):
     keysToDelete = []
     for key in jsonLoaded:
         i = 0
-        print("_key:",key)
         for item in jsonLoaded[key]:
             if len(item['previousAnalysis']) == 0:
-                print("+zebi+", item)
                 del jsonLoaded[key][i]
                 if len(jsonLoaded[key]) == 0:
                     # del json[key]
@@ -169,9 +167,6 @@ def getNlocNCCStats(data):
                     ccnTotalActual += eval(actualAnalysisData['ccn'])['avg']
                     i += 1
             except KeyError:
-                print("_+_+_ zebu _+_+_")
-                print(item['previousAnalysis'])
-                print("_+_+_ zebuFIN _+_+_")
                 pass
 
         if i > 0 :

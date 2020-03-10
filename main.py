@@ -105,8 +105,7 @@ with open(name, 'w') as outfile:
 
 
 print(" 7/8  -  Generating statistics")
-print(filteredFilesToAnalyze)
-print("zebi")
+#print(filteredFilesToAnalyze)
 print(getNlocNCCStats(json.dumps(filteredFilesToAnalyze)))
 print("--- %s seconds ---" % (time.time() - start_time))
 
