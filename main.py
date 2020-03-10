@@ -37,7 +37,7 @@ print("---------------------------------------")
 #######################################################################
 
 
-REPO = "/home/passport/Repos/tmp/thingsboard"
+REPO = "/Users/soufiane/Desktop/thingsboard"
 # REPO = "/home/passport/Repos/tmp/openmrs-sdk"
 
 
@@ -110,6 +110,8 @@ for key in filteredFilesToAnalyze:
 
 
 print(" 7/8  -  Generating statistics")
+print(filteredFilesToAnalyze)
+print("zebi")
 print(getNlocNCCStats(json.dumps(filteredFilesToAnalyze)))
 print("--- %s seconds ---" % (time.time() - start_time))
 
