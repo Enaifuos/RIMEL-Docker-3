@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import sys
 
 import git
 import lizard
@@ -10,6 +11,9 @@ from scripts.AnalysisStatistics import getStatisticsFromAllFiles
 from scripts.utils import getAllEVfromRepo, getCommitsWhereKeywordsAppear, getAllCommitsJSONFormat, getPreviousAndNext, \
     getFilesAndMethodsModified, startAnalysis, deleteEntriesWithEmptyFilesList, filterListByFilesThatExistsWithoutRepo, \
     getNlocNCCStats
+
+
+print("USAGE to analyze magma for example : python3 main.py ~/Desktop/magma")
 
 print("---------------------------------------")
 cwd = os.getcwd()
@@ -38,76 +42,79 @@ print("---------------------------------------")
 
 
 #REPO = "/Users/soufiane/Desktop/magma"
-name = "openmrs-sdk.json"
-REPO = "/home/passport/Repos/tmp/openmrs-sdk"
+if len(sys.argv) < 2 :
+    print("YOU NEED TO PROVIDE PATH TO THE REPOSITORY")
+else :
+    name = sys.argv[1].split("/")[-1]
+    REPO = sys.argv[1]
 
 
-print(" 1/8  -  Get VE from Project")
-EVs = getAllEVfromRepo(REPO)
-print(EVs)
-print("--- %s seconds ---" % (time.time() - start_time))
+    print(" 1/8  -  Get VE from Project")
+    EVs = getAllEVfromRepo(REPO)
+    print(EVs)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
-#EVs = ["ZOOKEEPER_URL"]
+    #EVs = ["ZOOKEEPER_URL"]
 
-print(" 2/8  -  Get all commits in json format")
-allCommitsJSONFormat = getAllCommitsJSONFormat(REPO, name)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-
-print(" 3/8  -  Get commits where EV appears")
-commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, EVs)
-print("--- %s seconds ---" % (time.time() - start_time))
+    print(" 2/8  -  Get all commits in json format")
+    allCommitsJSONFormat = getAllCommitsJSONFormat(REPO, name)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
-print(" 4/8  -  Get previous and next of each filtered commit")
-jsonPreviousNextCommit = getPreviousAndNext(allCommitsJSONFormat, commitsWhereEVsAppears)
-print("--- %s seconds ---" % (time.time() - start_time))
+    print(" 3/8  -  Get commits where EV appears")
+    commitsWhereEVsAppears = getCommitsWhereKeywordsAppear(REPO, EVs)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
-print(" 5/8 -  Get files where EV where touched")
-filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
-filteredFilesToAnalyze = deleteEntriesWithEmptyFilesList(filesToAnalyze)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-with open("step5"+name, 'w') as outfile:
-    json.dump(filteredFilesToAnalyze, outfile)
+    print(" 4/8  -  Get previous and next of each filtered commit")
+    jsonPreviousNextCommit = getPreviousAndNext(allCommitsJSONFormat, commitsWhereEVsAppears)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
-print(" 6/8  -  Analysing code (complexity, nloc..)")
+    print(" 5/8 -  Get files where EV where touched")
+    filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
+    filteredFilesToAnalyze = deleteEntriesWithEmptyFilesList(filesToAnalyze)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
-g = git.cmd.Git(REPO)
-
-
-for key in filteredFilesToAnalyze:
-    for jsonEntry in filteredFilesToAnalyze[key]:
-
-        # checkout actual, recuperer les analyses de tout les fichiers en actual
-        g.checkout(jsonEntry["actual"])
-        fileListToAnalyze = []
-
-        for file in jsonEntry["files"]:
-            fileListToAnalyze.append(REPO + "/" +file)
-            jsonEntry["actualAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
-
-        # checkout actual, recuperer les analyses de tout les fichiers en actual
-        g.checkout(jsonEntry["previous"])
-        fileListToAnalyze = []
-        existingFileList = filterListByFilesThatExistsWithoutRepo(REPO, jsonEntry["files"])
-
-        jsonEntry["previousAnalysis"] = {}
-        for file in existingFileList:
-            fileListToAnalyze.append(REPO + "/" +file)
-            jsonEntry["previousAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
-        g.checkout(jsonEntry["previous"])
-
-with open(name, 'w') as outfile:
-    json.dump(filteredFilesToAnalyze, outfile)
+    with open("step5"+name, 'w') as outfile:
+        json.dump(filteredFilesToAnalyze, outfile)
 
 
-print(" 7/8  -  Generating statistics")
-#print(filteredFilesToAnalyze)
-print(getNlocNCCStats(json.dumps(filteredFilesToAnalyze)))
-print("--- %s seconds ---" % (time.time() - start_time))
+    print(" 6/8  -  Analysing code (complexity, nloc..)")
+
+    g = git.cmd.Git(REPO)
+
+
+    for key in filteredFilesToAnalyze:
+        for jsonEntry in filteredFilesToAnalyze[key]:
+
+            # checkout actual, recuperer les analyses de tout les fichiers en actual
+            g.checkout(jsonEntry["actual"])
+            fileListToAnalyze = []
+
+            for file in jsonEntry["files"]:
+                fileListToAnalyze.append(REPO + "/" +file)
+                jsonEntry["actualAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
+
+            # checkout actual, recuperer les analyses de tout les fichiers en actual
+            g.checkout(jsonEntry["previous"])
+            fileListToAnalyze = []
+            existingFileList = filterListByFilesThatExistsWithoutRepo(REPO, jsonEntry["files"])
+
+            jsonEntry["previousAnalysis"] = {}
+            for file in existingFileList:
+                fileListToAnalyze.append(REPO + "/" +file)
+                jsonEntry["previousAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
+            g.checkout(jsonEntry["previous"])
+
+    with open(name, 'w') as outfile:
+        json.dump(filteredFilesToAnalyze, outfile)
+
+
+    print(" 7/8  -  Generating statistics")
+    #print(filteredFilesToAnalyze)
+    print(getNlocNCCStats(json.dumps(filteredFilesToAnalyze)))
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
 
