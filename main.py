@@ -69,7 +69,7 @@ filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
 filteredFilesToAnalyze = deleteEntriesWithEmptyFilesList(filesToAnalyze)
 print("--- %s seconds ---" % (time.time() - start_time))
 
-with open("step5_"+name, 'w') as outfile:
+with open("step5"+name, 'w') as outfile:
     json.dump(filteredFilesToAnalyze, outfile)
 
 

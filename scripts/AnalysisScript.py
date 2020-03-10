@@ -40,8 +40,13 @@ def runLizard(filenameList):
     nd = lizardnd()
     ns = lizardns()
     io = lizardio()
+
+    filterFileNameList = []
+    for file in filenameList :
+        if file.split(".")[-1] == 'java' :
+            filterFileNameList.append(file)
     extensions = lizard.get_extensions([duplicates, cpre, ns, nd, io])
-    outList = list(lizard.analyze_files(filenameList, exts=extensions))
+    outList = list(lizard.analyze_files(filterFileNameList, exts=extensions))
     dupCodeSnips = list(duplicates.get_duplicates(min_duplicate_tokens=MIN_DUP_TOKENS))
     dupInfo = {'duplicates': [dupInfoToDict(d) for d in dupCodeSnips],
                'duplicateRate': duplicates.saved_duplicate_rate,
