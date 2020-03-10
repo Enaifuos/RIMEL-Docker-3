@@ -37,9 +37,9 @@ print("---------------------------------------")
 #######################################################################
 
 
-REPO = "/Users/soufiane/Desktop/magma"
-name = "magma.json"
-# REPO = "/home/passport/Repos/tmp/openmrs-sdk"
+#REPO = "/Users/soufiane/Desktop/magma"
+name = "openmrs-sdk.json"
+REPO = "/home/passport/Repos/tmp/openmrs-sdk"
 
 
 print(" 1/8  -  Get VE from Project")

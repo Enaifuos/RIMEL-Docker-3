@@ -179,8 +179,14 @@ def getNlocNCCStats(data):
 
         for key in dictAnalysis:
             dictFinalCompute[key] = {}
-            dictFinalCompute[key]["nloc"] = dictAnalysis[key]["nlocTotalActual"] - dictAnalysis[key][
-                "nlocTotalPrevious"]
-            dictFinalCompute[key]["ccn"] = dictAnalysis[key]["ccnTotalActual"] - dictAnalysis[key]["ccnTotalPrevious"]
+            dictFinalCompute[key]["nlocDelta"] = dictAnalysis[key]["nlocTotalActual"] - dictAnalysis[key]["nlocTotalPrevious"]
+            dictFinalCompute[key]["nlocPrevious"] = dictAnalysis[key]["nlocTotalPrevious"]
+            dictFinalCompute[key]["nlocActual"] = dictAnalysis[key]["nlocTotalActual"]
+            dictFinalCompute[key]["ccnDelta"] = dictAnalysis[key]["ccnTotalActual"] - dictAnalysis[key]["ccnTotalPrevious"]
+            dictFinalCompute[key]["ccnPrevious"] = dictAnalysis[key]["ccnTotalPrevious"]
+            dictFinalCompute[key]["ccnActual"] = dictAnalysis[key]["ccnTotalActual"]
 
     return json.dumps(dictFinalCompute)
+
+
+{"DEBUG": {"nlocDelta": -0.009742632134448925, "ccnDelta": 0.051490487402235274, "nlocPrevious":666, "nlocActual":666, "ccnPrevious":666, "ccnActual":666}, "MYSQL_USER": {"nloc": 0.19552927927927932, "ccn": -0.08417792792792778, "nlocPrevious":666, "nlocActual":666, "ccnPrevious":666, "ccnActual":666}, "MYSQL_PASSWORD": {"nloc": 0.20436720621808036, "ccn": -0.03068912759552589, "nlocPrevious":666, "nlocActual":666, "ccnPrevious":666, "ccnActual":666}}
