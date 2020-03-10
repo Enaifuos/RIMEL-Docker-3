@@ -10,7 +10,9 @@ Second one contains scripts used to analyse JSON data files.
 # RUN 
 # example to analyze magma repository
 Need to install python3, lizard, matplotlib, gitpython, with pip3 install. 
+
 cd scripts
+
 python3 scriptPython.py ~/Desktop/magma 
 
 # Tools used
