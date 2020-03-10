@@ -158,17 +158,24 @@ def getNlocNCCStats(data):
         i = 0
 
         for item in output[key]:
-            previousAnalysisData = getStatisticsFromAllFiles(item['previousAnalysis'])
-            actualAnalysisData = getStatisticsFromAllFiles(item['actualAnalysis'])
+            try :
+                if len(item['previousAnalysis']['files']) > 0 :  
+                    previousAnalysisData = getStatisticsFromAllFiles(item['previousAnalysis'])
+                    actualAnalysisData = getStatisticsFromAllFiles(item['actualAnalysis'])
 
-            nlocTotalPrevious += eval(previousAnalysisData['nloc'])['avg']
-            nlocTotalActual += eval(actualAnalysisData['nloc'])['avg']
-            ccnTotalPrevious += eval(previousAnalysisData['ccn'])['avg']
-            ccnTotalActual += eval(actualAnalysisData['ccn'])['avg']
-            i += 1
+                    nlocTotalPrevious += eval(previousAnalysisData['nloc'])['avg']
+                    nlocTotalActual += eval(actualAnalysisData['nloc'])['avg']
+                    ccnTotalPrevious += eval(previousAnalysisData['ccn'])['avg']
+                    ccnTotalActual += eval(actualAnalysisData['ccn'])['avg']
+                    i += 1
+            except KeyError:
+                print("_+_+_ zebu _+_+_")
+                print(item['previousAnalysis'])
+                print("_+_+_ zebuFIN _+_+_")
+                pass
 
-        dictAnalysis[key] = {"nlocTotalPrevious": (nlocTotalPrevious / i), "nlocTotalActual": (nlocTotalActual / i),
-                             "ccnTotalPrevious": (ccnTotalPrevious / i), "ccnTotalActual": (ccnTotalActual / i)}
+        if i > 0 :
+            dictAnalysis[key] = {"nlocTotalPrevious": (nlocTotalPrevious / i), "nlocTotalActual": (nlocTotalActual / i), "ccnTotalPrevious": (ccnTotalPrevious / i), "ccnTotalActual": (ccnTotalActual / i)}
 
         for key in dictAnalysis:
             dictFinalCompute[key] = {}

@@ -80,6 +80,7 @@ for key in filteredFilesToAnalyze:
         # checkout actual, recuperer les analyses de tout les fichiers en actual
         g.checkout(jsonEntry["actual"])
         fileListToAnalyze = []
+
         for file in jsonEntry["files"]:
             fileListToAnalyze.append(REPO + "/" +file)
             jsonEntry["actualAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
