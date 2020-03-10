@@ -37,7 +37,8 @@ print("---------------------------------------")
 #######################################################################
 
 
-REPO = "/Users/soufiane/Desktop/thingsboard"
+REPO = "/Users/soufiane/Desktop/magma"
+name = "magma.json"
 # REPO = "/home/passport/Repos/tmp/openmrs-sdk"
 
 
@@ -49,7 +50,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 #EVs = ["ZOOKEEPER_URL"]
 
 print(" 2/8  -  Get all commits in json format")
-allCommitsJSONFormat = getAllCommitsJSONFormat(REPO, "thingsboard.json")
+allCommitsJSONFormat = getAllCommitsJSONFormat(REPO, name)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
@@ -67,6 +68,9 @@ print(" 5/8 -  Get files where EV where touched")
 filesToAnalyze = getFilesAndMethodsModified(jsonPreviousNextCommit, REPO)
 filteredFilesToAnalyze = deleteEntriesWithEmptyFilesList(filesToAnalyze)
 print("--- %s seconds ---" % (time.time() - start_time))
+
+with open("step5_"+name, 'w') as outfile:
+    json.dump(filteredFilesToAnalyze, outfile)
 
 
 print(" 6/8  -  Analysing code (complexity, nloc..)")
@@ -96,18 +100,8 @@ for key in filteredFilesToAnalyze:
             jsonEntry["previousAnalysis"] = runAnalysisFiles(REPO, fileListToAnalyze)
         g.checkout(jsonEntry["previous"])
 
-
-
-
-# print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["actualAnalysis"]))
-# print(getStatisticsFromAllFiles(filteredFilesToAnalyze["MYSQL_ROOT_PASSWORD"][0]["previousAnalysis"]))
-
-# print(deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
-# os.chdir(REPO)
-# analysis = runAnalysisFiles(REPO, deleteEntriesWithEmptyFilesList(filesToAnalyze)['ZOOKEEPER_URL'][0]["files"])
-# print(analysis)
-# print("--- %s seconds ---" % (time.time() - start_time))
-
+with open(name, 'w') as outfile:
+    json.dump(filteredFilesToAnalyze, outfile)
 
 
 print(" 7/8  -  Generating statistics")
